@@ -1,32 +1,29 @@
-import * as Yup from 'yup'
+import * as Yup from 'yup';
 import User from '../models/User';
 
 class SessionsController {
-    async store(request, response) {
-      const schema = Yup.object().shape({
-        email: Yup.string().email().required(),
-        password: Yup.string().required().min(6),
-      });
-  
-      if (!(schema.isValid(request.body))){
-        return response.status(400).json({ error: 'Make sure your password or email are correct' })
-      };
+  async store(request, response) {
+    const schema = Yup.object().shape({
+      email: Yup.string().email().required(),
+      password: Yup.string().required().min(6),
+    });
 
-      const { email, password } = request.body;
-  
-      const user = await User.findOne({
-        where: { email }
-      });
+    const userEmailOrPasswordIncorrect = () => response.status(400).json({ error: 'Make sure your password or email are correct' });
 
-      if(!user) {
-        return response.status(400).json({ error: 'Make sure your password or email are correct' })
-      };
+    if (!(schema.isValid(request.body))) userEmailOrPasswordIncorrect();
 
-      await user.checkPassword(password)
+    const { email, password } = request.body;
 
-      return response.json(user)
-    }
+    const user = await User.findOne({
+      where: { email },
+    });
+
+    if (!user) userEmailOrPasswordIncorrect();
+
+    if (!(await user.checkPassword(password))) userEmailOrPasswordIncorrect();
+
+    return response.json(user);
   }
-  
-  export default new SessionsController
-  
+}
+
+export default new SessionsController();
