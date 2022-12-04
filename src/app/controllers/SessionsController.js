@@ -1,3 +1,7 @@
+// resolve eslint
+/* eslint-disable class-methods-use-this */
+// finished
+
 import * as Yup from 'yup';
 import User from '../models/User';
 
