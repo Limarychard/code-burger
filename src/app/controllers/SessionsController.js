@@ -2,8 +2,10 @@
 /* eslint-disable class-methods-use-this */
 // finished
 
+import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 import User from '../models/User';
+import authConfig from '../../config/auth';
 
 class SessionsController {
   async store(request, response) {
@@ -26,7 +28,13 @@ class SessionsController {
 
     if (!(await user.checkPassword(password))) userEmailOrPasswordIncorrect();
 
-    return response.json(user);
+    return response.json({
+      id: user.id,
+      email,
+      name: user.name,
+      admin: user.admin,
+      token: jwt.sign({ id: user.id }, authConfig.secret, { expiresIn: authConfig.expiresIn }),
+    });
   }
 }
 
