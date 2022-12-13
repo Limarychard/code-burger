@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+import mongoose from 'mongoose';
 
 import Category from '../app/models/Category';
 import Product from '../app/models/Product';
@@ -15,6 +16,7 @@ const models = [
 class Database {
   constructor() {
     this.init();
+    this.mongo();
   }
 
   init() {
@@ -22,6 +24,17 @@ class Database {
     models
       .map((model) => model.init(this.connection))
       .map((model) => model.associate && model.associate(this.connection.models));
+  }
+
+  mongo() {
+    mongoose.set('strictQuery', true);
+    this.mongoConnection = mongoose.connect(
+      'mongodb://localhost:27017/codeburger',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
+    );
   }
 }
 
