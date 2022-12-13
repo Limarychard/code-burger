@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { v4 } from 'uuid';
 import * as Yup from 'yup';
 
